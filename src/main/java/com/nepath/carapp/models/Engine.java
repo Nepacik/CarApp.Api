@@ -1,14 +1,18 @@
 package com.nepath.carapp.models;
 
+import lombok.*;
+
 import javax.persistence.*;
-import java.io.Serializable;
 import java.util.List;
 
 @Entity
 @Table(name = "engines")
+@NoArgsConstructor
+@Getter
+@Setter
 public class Engine {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -16,22 +20,4 @@ public class Engine {
 
     @OneToMany(mappedBy = "engine")
     private List<Car> cars;
-
-    protected Engine(){}
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 }

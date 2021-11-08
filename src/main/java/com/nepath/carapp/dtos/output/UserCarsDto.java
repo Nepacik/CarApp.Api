@@ -6,8 +6,9 @@ import lombok.Setter;
 import java.util.List;
 
 @Data
-public class UserDto {
+public class UserCarsDto {
     private Long id;
     private String nick;
     private String email;
+    private List<CarDto> cars;
 }

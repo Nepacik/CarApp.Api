@@ -1,6 +1,6 @@
 package com.nepath.carapp.mappers;
 
-import com.nepath.carapp.dtos.output.BrandDto;
+import com.nepath.carapp.dtos.input.BrandCreateDto;
 import com.nepath.carapp.models.Brand;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -9,5 +9,5 @@ import org.mapstruct.factory.Mappers;
 public interface BrandMapper {
     BrandMapper BRAND_MAPPER = Mappers.getMapper(BrandMapper.class);
 
-    BrandDto brandToBrandDto(Brand brand);
+    Brand brandDtoToBrand(BrandCreateDto brandCreateDto);
 }
