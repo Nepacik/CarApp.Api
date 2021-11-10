@@ -3,11 +3,16 @@ package com.nepath.carapp.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nepath.carapp.dtos.input.LoginDto;
 import com.nepath.carapp.dtos.output.TokenDto;
+import com.nepath.carapp.exceptions.ApiException;
+import com.nepath.carapp.exceptions.ApiRequestException;
 import com.nepath.carapp.services.SecurityService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.tomcat.util.http.parser.Authorization;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -43,8 +48,14 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     @SneakyThrows
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        LoginDto loginDto = new ObjectMapper().readValue(request.getReader(), LoginDto.class);
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getLogin(), loginDto.getPassword());
+
+        UsernamePasswordAuthenticationToken authenticationToken;
+        try {
+            LoginDto loginDto = new ObjectMapper().readValue(request.getReader(), LoginDto.class);
+            authenticationToken = new UsernamePasswordAuthenticationToken(loginDto.getLogin(), loginDto.getPassword());
+        } catch (IOException e) {
+            throw new BadCredentialsException("Invalid request");
+        }
         return authenticationManager.authenticate(authenticationToken);
     }
 

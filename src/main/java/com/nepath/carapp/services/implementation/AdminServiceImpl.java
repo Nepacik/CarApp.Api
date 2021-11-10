@@ -1,6 +1,13 @@
 package com.nepath.carapp.services.implementation;
 
+import com.nepath.carapp.dtos.input.BrandCreateDto;
+import com.nepath.carapp.dtos.input.ChangeCarOwnerDto;
+import com.nepath.carapp.dtos.input.EngineCreateDto;
+import com.nepath.carapp.dtos.input.ModelCreateDto;
 import com.nepath.carapp.exceptions.ApiRequestException;
+import com.nepath.carapp.mappers.BrandMapper;
+import com.nepath.carapp.mappers.EngineMapper;
+import com.nepath.carapp.mappers.ModelMapper;
 import com.nepath.carapp.models.Brand;
 import com.nepath.carapp.models.Engine;
 import com.nepath.carapp.models.Model;
@@ -9,7 +16,10 @@ import com.nepath.carapp.services.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.CannotCreateTransactionException;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -21,57 +31,56 @@ public class AdminServiceImpl implements AdminService {
     private final EngineRepository engineRepository;
     private final CarRepository carRepository;
     private final UserRepository userRepository;
+    private final BrandMapper brandMapper;
+    private final EngineMapper engineMapper;
+    private final ModelMapper modelMapper;
 
     @Override
-    public void createBrand(Brand brand) {
+    public void createBrand(BrandCreateDto brandCreateDto) {
         try {
-            brandRepository.save(brand);
+            brandRepository.save(brandMapper.brandDtoToBrand(brandCreateDto));
         } catch (DataIntegrityViolationException exception) {
             throw new ApiRequestException.ConflictException("Brand already exists");
-        } catch (Exception e) {
-            throw new ApiRequestException.ServerErrorException();
         }
     }
 
     @Override
-    public void createEngine(Engine engine) {
+    public void createEngine(EngineCreateDto engineCreateDto) {
         try {
-            engineRepository.save(engine);
+            engineRepository.save(engineMapper.engineDtoToEngine(engineCreateDto));
         } catch (DataIntegrityViolationException exception) {
             throw new ApiRequestException.ConflictException("Engine already exists");
-        } catch (Exception e) {
-            throw new ApiRequestException.ServerErrorException();
         }
     }
 
     @Override
-    public void createModel(Model model) {
+    public void createModel(ModelCreateDto modelCreateDto) {
         try {
-            if(!brandRepository.existsById(model.getBrand().getId())) {
+            if(!brandRepository.existsById(modelCreateDto.getBrandId())) {
                 throw new ApiRequestException.NotFoundErrorException("Brand does not exists");
             }
-            modelRepository.save(model);
+            modelRepository.save(modelMapper.modelDtoToModel(modelCreateDto));
         } catch (DataIntegrityViolationException exception) {
             throw new ApiRequestException.ConflictException("Model already exists");
-        } catch (Exception e) {
-            throw new ApiRequestException.ServerErrorException();
         }
     }
 
     @Override
-    public void changeCarOwner(Long carId, Long userId) {
+    @Transactional
+    public void changeCarOwner(ChangeCarOwnerDto changeCarOwnerDto) {
         try {
-            if (!carRepository.existsById(carId)) {
+            if (!carRepository.existsById(changeCarOwnerDto.getCarId())) {
                 throw new ApiRequestException.NotFoundErrorException("Car does not exists");
             }
-            if (!userRepository.existsById(userId)) {
+            if (!userRepository.existsById(changeCarOwnerDto.getNewOwnerId())) {
                 throw new ApiRequestException.NotFoundErrorException("User does not exists");
             }
-            carRepository.changeCarOwner( carId, userId);
+            if(carRepository.existsCarWithOwnerId(changeCarOwnerDto.getCarId(), changeCarOwnerDto.getNewOwnerId())) {
+                throw new ApiRequestException.NotFoundErrorException("Car already belongs to this owner");
+            }
+            carRepository.changeCarOwner(changeCarOwnerDto.getCarId(), changeCarOwnerDto.getNewOwnerId());
         } catch (DataIntegrityViolationException exception) {
             throw new ApiRequestException.ConflictException("Model already exists");
-        } catch (Exception e) {
-            throw new ApiRequestException.ServerErrorException();
         }
     }
 

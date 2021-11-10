@@ -2,6 +2,10 @@ package com.nepath.carapp.services.implementation;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.nepath.carapp.dtos.input.RefreshTokenDto;
+import com.nepath.carapp.dtos.input.UserCreateDto;
 import com.nepath.carapp.dtos.output.TokenDto;
 import com.nepath.carapp.enums.TokenType;
 import com.nepath.carapp.exceptions.ApiRequestException;
@@ -17,6 +21,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
@@ -38,22 +43,29 @@ public class SecurityServiceImpl implements SecurityService {
         return new TokenDto(accessToken, refreshToken);
     }
 
+    @Override
+    public TokenDto registerCreateToken(UserCreateDto userCreateDto, String requestUrl) {
+        User user = userRepository.findByNick(userCreateDto.getNick());
+        if (user == null) {
+            throw new ApiRequestException.AuthorizationException();
+        }
+        return createTokenDto(user.getNick(), user.getId().toString(), user.getRole().getName(), requestUrl);
+    }
+
     @SneakyThrows
     @Override
-    public TokenDto refreshToken(String refreshToken, String requestUrl) {
+    public TokenDto refreshToken(RefreshTokenDto refreshTokenDto, String requestUrl) {
         JWTVerifier verifier = JWT.require(JWTExtensions.getAlgorithm()).build();
-        String username = verifier.verify(refreshToken).getClaim(JWTProperties.USERNAME).asString();
-
+        String username = verifier.verify(refreshTokenDto.getRefreshToken()).getClaim(JWTProperties.USERNAME).asString();
         User user = userRepository.findByNick(username);
         if (user == null) {
             log.error("User not found during refresh token attempt");
 
-            throw new ApiRequestException.NotFoundErrorException("asfafasf");
+            throw new ApiRequestException.AuthorizationException();
         }
-
         String accessToken = createToken(user.getNick(), user.getId().toString(), user.getRole().getName(), requestUrl, TokenType.ACCESS_TOKEN);
 
-        return new TokenDto(accessToken, refreshToken);
+        return new TokenDto(accessToken, refreshTokenDto.getRefreshToken());
     }
 
     @Override

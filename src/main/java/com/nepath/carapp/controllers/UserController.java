@@ -22,11 +22,13 @@ public class UserController {
 
     @GetMapping("/users")
     public ResponseEntity<List<UserDto>> getUsers() {
-        return ResponseEntity.ok().body(userMapper.userToUserDto(userService.getUsers()));
+        List<UserDto> userDtos = userService.getUsers();
+        return ResponseEntity.ok().body(userDtos);
     }
 
     @GetMapping("/userCar")
     public ResponseEntity<UserCarsDto> getUserCars(@RequestParam Long id) {
-        return ResponseEntity.ok().body(userMapper.userToUserCarsDto(userService.getUser(id)));
+        UserCarsDto userCarsDto = userService.getUser(id);
+        return ResponseEntity.ok().body(userCarsDto);
     }
 }

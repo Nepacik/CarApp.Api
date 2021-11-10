@@ -1,10 +1,16 @@
 package com.nepath.carapp.services.implementation;
 
+import com.nepath.carapp.dtos.input.CarCreateDto;
+import com.nepath.carapp.dtos.output.CarDto;
+import com.nepath.carapp.exceptions.ApiRequestException;
+import com.nepath.carapp.mappers.CarMapper;
 import com.nepath.carapp.models.Car;
 import com.nepath.carapp.repositories.CarRepository;
 import com.nepath.carapp.services.CarService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -15,14 +21,15 @@ import java.util.List;
 public class CarServiceImpl implements CarService {
 
     private final CarRepository carRepository;
+    private final CarMapper carMapper;
 
     @Override
-    public void registerCar(Car car) {
-        carRepository.save(car);
+    public void registerCar(CarCreateDto carCreateDto) {
+        carRepository.save(carMapper.carCreateDtoToCar(carCreateDto));
     }
 
     @Override
-    public List<Car> getAllCars() {
-        return carRepository.findAll();
+    public List<CarDto> getAllCars() {
+        return carMapper.carToCarDto(carRepository.findAll());
     }
 }

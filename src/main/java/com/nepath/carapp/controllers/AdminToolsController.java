@@ -22,32 +22,28 @@ import javax.validation.Valid;
 @RequiredArgsConstructor
 public class AdminToolsController {
     private final AdminService adminService;
-    private final CarMapper carMapper;
-    private final EngineMapper engineMapper;
-    private final ModelMapper modelMapper;
-    private final BrandMapper brandMapper;
 
     @PostMapping("/createEngine")
     ResponseEntity<Void>createEngine(@Valid @RequestBody EngineCreateDto engineCreateDto) {
-        adminService.createEngine(engineMapper.engineDtoToEngine(engineCreateDto));
+        adminService.createEngine(engineCreateDto);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/createModel")
     ResponseEntity<Void>createModel(@Valid @RequestBody ModelCreateDto modelCreateDto) {
-        adminService.createModel(modelMapper.modelDtoToModel(modelCreateDto));
+        adminService.createModel(modelCreateDto);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/createBrand")
     ResponseEntity<Void>createBrand(@Valid @RequestBody BrandCreateDto brandCreateDto) {
-        adminService.createBrand(brandMapper.brandDtoToBrand(brandCreateDto));
+        adminService.createBrand(brandCreateDto);
         return ResponseEntity.ok().build();
     }
 
     @PostMapping("/changeCarOwner")
     ResponseEntity<CarDto> changeCarOwner(@Valid @RequestBody ChangeCarOwnerDto changeCarOwnerDto) {
-        adminService.changeCarOwner(changeCarOwnerDto.getCarId(), changeCarOwnerDto.getNewOwnerId());
+        adminService.changeCarOwner(changeCarOwnerDto);
         return ResponseEntity.ok().build();
     }
 }
