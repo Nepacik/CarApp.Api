@@ -9,6 +9,7 @@ import java.util.List;
 @Entity
 @Table(name = "users")
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class User {
@@ -27,4 +28,8 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Car> cars;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private Role role;
 }

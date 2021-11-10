@@ -20,6 +20,5 @@ public interface UserMapper {
 
     UserCarsDto userToUserCarsDto(User user);
 
-
     User createUserToUser(UserCreateDto userCreateDto);
 }

@@ -1,8 +1,13 @@
 package com.nepath.carapp.services;
 
-import org.springframework.stereotype.Service;
+import com.nepath.carapp.models.User;
 
-@Service
+import java.util.List;
+
 public interface UserService {
-
+    User getUser(String userName);
+    User getUser(Long id);
+    User saveUser(User user);
+    void addRoleToUser(String username, String roleName);
+    List<User> getUsers();
 }

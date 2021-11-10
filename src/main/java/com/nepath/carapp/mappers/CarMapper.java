@@ -25,6 +25,5 @@ public interface CarMapper {
 
     @Mapping(target = "model.id", source = "modelId")
     @Mapping(target = "engine.id", source = "engineID")
-    @Mapping(target = "user.id", source = "userId")
     Car carCreateDtoToCar(CarCreateDto carCreateDto);
 }

@@ -6,5 +6,4 @@ import lombok.Data;
 public class CarCreateDto {
     private Long modelId;
     private Long engineID;
-    private Long userId;
 }
