@@ -1,6 +1,8 @@
 package com.nepath.carapp.repositories;
 
 import com.nepath.carapp.models.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,4 +17,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsUserByNick(String nick);
 
+    @Query(value = "SELECT * FROM users ORDER BY email", nativeQuery = true)
+    Page<User> findAllUsersSortByEmail(Pageable pageable);
 }

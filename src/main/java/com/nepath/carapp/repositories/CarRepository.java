@@ -16,4 +16,8 @@ public interface CarRepository extends JpaRepository<Car, Long> {
 
     @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM Car c WHERE c.id = :carId and c.user.id = :userId")
     boolean existsCarWithOwnerId(@Param(value = "carId") Long carId, @Param(value = "userId") Long userId);
+
+    @Modifying
+    @Query("UPDATE Car SET user.id = NULL where user.id = :userId")
+    void removeCarOwner(@Param(value = "userId") Long userId);
 }

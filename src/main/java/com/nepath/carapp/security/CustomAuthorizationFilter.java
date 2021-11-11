@@ -8,6 +8,7 @@ import com.nepath.carapp.exceptions.ApiRequestException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -42,18 +43,22 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                     authorities.add(new SimpleGrantedAuthority(role));
                     IdUsernamePasswordAuthenticationToken authenticationToken = new IdUsernamePasswordAuthenticationToken(username, null, authorities, userId);
                     SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-
+                    filterChain.doFilter(request, response);
                 } catch (Exception exception) {
-                    log.error(exception.getMessage());
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    ApiException apiException = new ApiException("Authorization failed", HttpStatus.UNAUTHORIZED);
-                    response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-                    new ObjectMapper().writeValue(response.getOutputStream(), apiException);
-                    return;
+                    responseErrorHandler(request, response);
                 }
-
+            } else {
+                responseErrorHandler(request, response);
             }
+        } else {
+            filterChain.doFilter(request, response);
         }
-        filterChain.doFilter(request, response);
+    }
+
+    private void responseErrorHandler(HttpServletRequest request, HttpServletResponse response) throws IOException{
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        ApiException apiException = new ApiException("Authorization failed", HttpStatus.UNAUTHORIZED);
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        new ObjectMapper().writeValue(response.getOutputStream(), apiException);
     }
 }

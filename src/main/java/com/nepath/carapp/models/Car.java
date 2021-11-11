@@ -25,6 +25,6 @@ public class Car {
     private Engine engine;
 
     @ManyToOne()
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 }

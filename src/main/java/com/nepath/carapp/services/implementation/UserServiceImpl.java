@@ -1,24 +1,32 @@
 package com.nepath.carapp.services.implementation;
 
-import com.nepath.carapp.dtos.input.LoginDto;
 import com.nepath.carapp.dtos.input.UserCreateDto;
+import com.nepath.carapp.dtos.output.PaginationClassDto;
 import com.nepath.carapp.dtos.output.UserCarsDto;
 import com.nepath.carapp.dtos.output.UserDto;
 import com.nepath.carapp.exceptions.ApiRequestException;
 import com.nepath.carapp.mappers.UserMapper;
 import com.nepath.carapp.models.Role;
 import com.nepath.carapp.models.User;
+import com.nepath.carapp.repositories.CarRepository;
 import com.nepath.carapp.repositories.RoleRepository;
 import com.nepath.carapp.repositories.UserRepository;
+import com.nepath.carapp.security.CurrentUser;
 import com.nepath.carapp.services.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import lombok.val;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -27,7 +35,7 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final RoleRepository roleRepository;
+    private final CarRepository carRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
@@ -51,7 +59,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User saveUser(UserCreateDto userCreateDto) {
+    public void saveUser(UserCreateDto userCreateDto) {
         User user = userMapper.createUserToUser(userCreateDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Role role = new Role();
@@ -63,24 +71,23 @@ public class UserServiceImpl implements UserService {
         if(userRepository.existsUserByNick(user.getNick())) {
             throw new ApiRequestException.ConflictException("Nick already exists");
         }
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
     @Override
-    public void addRoleToUser(String username, String roleName) {
-        User user = userRepository.findByNick(username);
-        if(user == null) {
-            throw new ApiRequestException.NotFoundErrorException("User does not exist");
-        }
-        Role role = roleRepository.findByName(roleName);
-        if (role == null) {
-            throw new ApiRequestException.NotFoundErrorException("Role does not exist");
-        }
-        user.setRole(role);
+    public PaginationClassDto<UserDto> getUsers(int page) {
+        Pageable pageable = PageRequest.of(page, 20);
+        Page<User> users = userRepository.findAllUsersSortByEmail(pageable);
+        return new PaginationClassDto<>(userMapper.userToUserDto(users.getContent()), page);
     }
 
+    @SneakyThrows
+    @Transactional
+    @Async
     @Override
-    public List<UserDto> getUsers() {
-        return userMapper.userToUserDto(userRepository.findAll());
+    public void deleteUser() {
+        carRepository.removeCarOwner(CurrentUser.getUserId());
+        TimeUnit.SECONDS.sleep(20);
+        userRepository.deleteById(CurrentUser.getUserId());
     }
 }

@@ -73,7 +73,7 @@ public class SecurityServiceImpl implements SecurityService {
         User user = userRepository.findByNick(username);
         if (user == null) {
             log.error("user not found");
-            throw new ApiRequestException.AuthorizationException();
+            throw new UsernameNotFoundException("User not found");
         }
         return new SecurityUserDetails(user.getId(), user.getNick(), user.getPassword(), user.getRole().getName());
     }

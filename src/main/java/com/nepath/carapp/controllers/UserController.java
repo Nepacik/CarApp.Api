@@ -1,5 +1,6 @@
 package com.nepath.carapp.controllers;
 
+import com.nepath.carapp.dtos.output.PaginationClassDto;
 import com.nepath.carapp.dtos.output.UserCarsDto;
 import com.nepath.carapp.dtos.output.UserDto;
 import com.nepath.carapp.exceptions.ApiRequestException;
@@ -17,12 +18,11 @@ import java.util.*;
 @RequestMapping("/user")
 public class UserController {
 
-    private final UserMapper userMapper;
     private final UserService userService;
 
     @GetMapping("/users")
-    public ResponseEntity<List<UserDto>> getUsers() {
-        List<UserDto> userDtos = userService.getUsers();
+    public ResponseEntity<PaginationClassDto<UserDto>> getUsers(@RequestParam int page) {
+        PaginationClassDto<UserDto> userDtos = userService.getUsers(page);
         return ResponseEntity.ok().body(userDtos);
     }
 
@@ -30,5 +30,11 @@ public class UserController {
     public ResponseEntity<UserCarsDto> getUserCars(@RequestParam Long id) {
         UserCarsDto userCarsDto = userService.getUser(id);
         return ResponseEntity.ok().body(userCarsDto);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Void> deleteUser() {
+        userService.deleteUser();
+        return ResponseEntity.noContent().build();
     }
 }
