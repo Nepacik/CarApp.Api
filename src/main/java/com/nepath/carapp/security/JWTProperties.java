@@ -9,6 +9,7 @@ public class JWTProperties {
     public static final String LOGIN_PATH = "/authorization/login";
     public static final String REGISTRATION_PATH = "/authorization/register";
     public static final String REFRESH_TOKEN_PATH = "/authorization/refreshToken";
+    public static final String LOGOUT_PATH = "/authorization/logout";
 
     public static final String USERNAME = "username";
     public static final String ROLE = "role";

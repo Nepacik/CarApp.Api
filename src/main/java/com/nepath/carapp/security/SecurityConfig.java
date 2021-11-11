@@ -34,8 +34,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/admin/**").hasAnyAuthority(SecurityRoles.ADMIN);
         http.authorizeRequests().antMatchers("/car/**").authenticated();
         http.authorizeRequests().antMatchers("/authorization/delete").authenticated();
-        http.authorizeRequests().antMatchers("/authorization/login").permitAll();
-        http.authorizeRequests().antMatchers("/authorization/register").permitAll();
+        http.authorizeRequests().antMatchers(JWTProperties.LOGIN_PATH).permitAll();
+        http.authorizeRequests().antMatchers(JWTProperties.REGISTRATION_PATH).permitAll();
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
         http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean(), securityService));
     }
