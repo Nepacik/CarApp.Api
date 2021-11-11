@@ -2,9 +2,7 @@ package com.nepath.carapp.mappers;
 
 import com.nepath.carapp.dtos.input.CarCreateDto;
 import com.nepath.carapp.dtos.output.CarDto;
-import com.nepath.carapp.dtos.output.UserDto;
 import com.nepath.carapp.models.Car;
-import com.nepath.carapp.models.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;

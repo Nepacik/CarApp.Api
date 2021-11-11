@@ -9,14 +9,12 @@ import com.nepath.carapp.mappers.UserMapper;
 import com.nepath.carapp.models.Role;
 import com.nepath.carapp.models.User;
 import com.nepath.carapp.repositories.CarRepository;
-import com.nepath.carapp.repositories.RoleRepository;
 import com.nepath.carapp.repositories.UserRepository;
-import com.nepath.carapp.security.CurrentUser;
+import com.nepath.carapp.security.extensions.CurrentUser;
 import com.nepath.carapp.services.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +22,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.List;
+
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 

@@ -2,11 +2,6 @@ package com.nepath.carapp.controllers;
 
 import com.nepath.carapp.dtos.input.*;
 import com.nepath.carapp.dtos.output.CarDto;
-import com.nepath.carapp.mappers.BrandMapper;
-import com.nepath.carapp.mappers.CarMapper;
-import com.nepath.carapp.mappers.EngineMapper;
-import com.nepath.carapp.mappers.ModelMapper;
-import com.nepath.carapp.models.Car;
 import com.nepath.carapp.services.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

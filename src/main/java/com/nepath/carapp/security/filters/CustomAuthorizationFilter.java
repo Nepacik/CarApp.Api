@@ -1,14 +1,16 @@
-package com.nepath.carapp.security;
+package com.nepath.carapp.security.filters;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nepath.carapp.exceptions.ApiException;
-import com.nepath.carapp.exceptions.ApiRequestException;
+import com.nepath.carapp.security.IdUsernamePasswordAuthenticationToken;
+import com.nepath.carapp.security.extensions.JWTExtensions;
+import com.nepath.carapp.security.properties.JWTProperties;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -24,8 +26,9 @@ import java.util.Collection;
 @Slf4j
 public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
+    @SuppressWarnings("response")
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
         String requestPath = request.getServletPath();
         if (!requestPath.equals(JWTProperties.LOGIN_PATH) && !requestPath.equals(JWTProperties.REGISTRATION_PATH) && !requestPath.equals(JWTProperties.REFRESH_TOKEN_PATH)) {
             String authorizationHeader = request.getHeader(JWTProperties.HEADER_STRING);
@@ -47,12 +50,9 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
                 } catch (Exception exception) {
                     responseErrorHandler(request, response);
                 }
-            } else {
-                responseErrorHandler(request, response);
             }
-        } else {
-            filterChain.doFilter(request, response);
         }
+        filterChain.doFilter(request, response);
     }
 
     private void responseErrorHandler(HttpServletRequest request, HttpServletResponse response) throws IOException{

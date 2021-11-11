@@ -1,22 +1,19 @@
-package com.nepath.carapp.security;
+package com.nepath.carapp.security.filters;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nepath.carapp.dtos.input.LoginDto;
 import com.nepath.carapp.dtos.output.TokenDto;
-import com.nepath.carapp.exceptions.ApiException;
-import com.nepath.carapp.exceptions.ApiRequestException;
+import com.nepath.carapp.security.properties.JWTProperties;
+import com.nepath.carapp.security.SecurityUserDetails;
 import com.nepath.carapp.services.SecurityService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.tomcat.util.http.parser.Authorization;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.servlet.FilterChain;
@@ -28,13 +25,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
-public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public
+class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
 
     private final SecurityService securityService;
 
-    CustomAuthenticationFilter(AuthenticationManager authenticationManager, SecurityService securityService) {
+    public CustomAuthenticationFilter(AuthenticationManager authenticationManager, SecurityService securityService) {
         this.authenticationManager = authenticationManager;
         this.securityService = securityService;
 

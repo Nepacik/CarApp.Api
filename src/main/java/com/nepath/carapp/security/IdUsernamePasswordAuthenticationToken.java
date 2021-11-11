@@ -9,11 +9,6 @@ public class IdUsernamePasswordAuthenticationToken extends UsernamePasswordAuthe
 
     private final Long userId;
 
-    public IdUsernamePasswordAuthenticationToken(Object principal, Object credentials, Long userId) {
-        super(principal, credentials);
-        this.userId = userId;
-    }
-
     public IdUsernamePasswordAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities, Long userId) {
         super(principal, credentials, authorities);
         this.userId = userId;

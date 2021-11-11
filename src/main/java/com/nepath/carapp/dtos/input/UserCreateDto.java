@@ -1,9 +1,6 @@
 package com.nepath.carapp.dtos.input;
 
-import com.nepath.carapp.dtos.output.CarDto;
-import com.nepath.carapp.exceptions.ApiException;
 import lombok.Data;
-import org.springframework.http.HttpStatus;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;

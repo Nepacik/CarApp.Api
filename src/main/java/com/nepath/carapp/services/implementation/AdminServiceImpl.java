@@ -6,19 +6,14 @@ import com.nepath.carapp.dtos.input.EngineCreateDto;
 import com.nepath.carapp.dtos.input.ModelCreateDto;
 import com.nepath.carapp.exceptions.ApiRequestException;
 import com.nepath.carapp.mappers.BrandMapper;
+import com.nepath.carapp.mappers.CarModelMapper;
 import com.nepath.carapp.mappers.EngineMapper;
-import com.nepath.carapp.mappers.ModelMapper;
-import com.nepath.carapp.models.Brand;
-import com.nepath.carapp.models.Engine;
-import com.nepath.carapp.models.Model;
 import com.nepath.carapp.repositories.*;
 import com.nepath.carapp.services.AdminService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
@@ -33,7 +28,7 @@ public class AdminServiceImpl implements AdminService {
     private final UserRepository userRepository;
     private final BrandMapper brandMapper;
     private final EngineMapper engineMapper;
-    private final ModelMapper modelMapper;
+    private final CarModelMapper carModelMapper;
 
     @Override
     public void createBrand(BrandCreateDto brandCreateDto) {
@@ -59,7 +54,7 @@ public class AdminServiceImpl implements AdminService {
             if(!brandRepository.existsById(modelCreateDto.getBrandId())) {
                 throw new ApiRequestException.NotFoundErrorException("Brand does not exists");
             }
-            modelRepository.save(modelMapper.modelDtoToModel(modelCreateDto));
+            modelRepository.save(carModelMapper.modelDtoToModel(modelCreateDto));
         } catch (DataIntegrityViolationException exception) {
             throw new ApiRequestException.ConflictException("Model already exists");
         }

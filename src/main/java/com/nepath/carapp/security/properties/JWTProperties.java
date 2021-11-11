@@ -1,4 +1,4 @@
-package com.nepath.carapp.security;
+package com.nepath.carapp.security.properties;
 
 public class JWTProperties {
     public static final String SECRET = "UluMuluPrzyjazniZnak";

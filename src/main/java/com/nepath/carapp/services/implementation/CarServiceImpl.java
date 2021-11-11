@@ -2,15 +2,11 @@ package com.nepath.carapp.services.implementation;
 
 import com.nepath.carapp.dtos.input.CarCreateDto;
 import com.nepath.carapp.dtos.output.CarDto;
-import com.nepath.carapp.exceptions.ApiRequestException;
 import com.nepath.carapp.mappers.CarMapper;
-import com.nepath.carapp.models.Car;
 import com.nepath.carapp.repositories.CarRepository;
 import com.nepath.carapp.services.CarService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;

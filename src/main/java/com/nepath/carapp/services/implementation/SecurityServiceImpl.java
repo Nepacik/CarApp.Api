@@ -2,8 +2,6 @@ package com.nepath.carapp.services.implementation;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.nepath.carapp.dtos.input.RefreshTokenDto;
 import com.nepath.carapp.dtos.input.UserCreateDto;
 import com.nepath.carapp.dtos.output.TokenDto;
@@ -11,8 +9,8 @@ import com.nepath.carapp.enums.TokenType;
 import com.nepath.carapp.exceptions.ApiRequestException;
 import com.nepath.carapp.models.User;
 import com.nepath.carapp.repositories.UserRepository;
-import com.nepath.carapp.security.JWTExtensions;
-import com.nepath.carapp.security.JWTProperties;
+import com.nepath.carapp.security.extensions.JWTExtensions;
+import com.nepath.carapp.security.properties.JWTProperties;
 import com.nepath.carapp.security.SecurityUserDetails;
 import com.nepath.carapp.services.SecurityService;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +19,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.CannotCreateTransactionException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;

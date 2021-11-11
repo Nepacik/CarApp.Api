@@ -1,10 +1,12 @@
 package com.nepath.carapp.controllers;
 
+import com.nepath.carapp.dtos.input.LoginDto;
 import com.nepath.carapp.dtos.input.RefreshTokenDto;
 import com.nepath.carapp.dtos.input.UserCreateDto;
 import com.nepath.carapp.dtos.output.TokenDto;
 import com.nepath.carapp.services.SecurityService;
 import com.nepath.carapp.services.UserService;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -40,5 +42,11 @@ public class AuthorizationController {
         userService.saveUser(userCreateDto);
         TokenDto tokenDto = securityService.registerCreateToken(userCreateDto, request.getRequestURL().toString());
         return ResponseEntity.created(uri).body(tokenDto);
+    }
+
+    @ApiOperation("Login.")
+    @PostMapping("/login")
+    public void fakeLogin(@RequestBody LoginDto loginDto) {
+        throw new IllegalStateException("This method shouldn't be called. It's implemented by Spring Security filters.");
     }
 }

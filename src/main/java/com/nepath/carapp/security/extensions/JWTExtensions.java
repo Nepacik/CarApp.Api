@@ -1,8 +1,7 @@
-package com.nepath.carapp.security;
+package com.nepath.carapp.security.extensions;
 
 import com.auth0.jwt.algorithms.Algorithm;
-import io.jsonwebtoken.JwtException;
-import io.jsonwebtoken.Jwts;
+import com.nepath.carapp.security.properties.JWTProperties;
 import org.springframework.stereotype.Component;
 
 

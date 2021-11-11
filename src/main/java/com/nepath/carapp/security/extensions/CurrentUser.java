@@ -1,6 +1,7 @@
-package com.nepath.carapp.security;
+package com.nepath.carapp.security.extensions;
 
 import com.nepath.carapp.models.User;
+import com.nepath.carapp.security.IdUsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class CurrentUser {

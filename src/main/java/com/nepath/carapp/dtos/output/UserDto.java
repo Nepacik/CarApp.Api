@@ -1,12 +1,11 @@
 package com.nepath.carapp.dtos.output;
 
 import lombok.Data;
-import lombok.Setter;
 
-import java.util.List;
+import java.io.Serializable;
 
 @Data
-public class UserDto {
+public class UserDto implements Serializable {
     private Long id;
     private String nick;
     private String email;
