@@ -11,9 +11,5 @@ public interface UserService {
 
     UserCarsDto getUser(Long id);
 
-    void saveUser(UserCreateDto userCreateDto);
-
     PaginationClassDto<UserDto> getUsers(int page);
-
-    void deleteUser();
 }

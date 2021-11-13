@@ -2,7 +2,7 @@ package com.nepath.carapp.security.properties;
 
 public class JWTProperties {
     public static final String SECRET = "UluMuluPrzyjazniZnak";
-    public static final int ACCESS_TOKEN_EXPIRATION_TIME = 180 * 60 * 1000; // 5 min
+    public static final int ACCESS_TOKEN_EXPIRATION_TIME = 5 * 60 * 1000; // 5 min
     public static final int REFRESH_TOKEN_EXPIRATION_TIME = 90 * 24 * 60 * 1000; // 90 days
     public static final String TOKEN_PREFIX = "Bearer ";
     public static final String HEADER_STRING = "Authorization";

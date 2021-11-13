@@ -6,6 +6,7 @@ import com.nepath.carapp.dtos.output.UserDto;
 import com.nepath.carapp.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
@@ -25,11 +26,5 @@ public class UserController {
     public ResponseEntity<UserCarsDto> getUserCars(@RequestParam Long id) {
         UserCarsDto userCarsDto = userService.getUser(id);
         return ResponseEntity.ok().body(userCarsDto);
-    }
-
-    @DeleteMapping("/delete")
-    public ResponseEntity<Void> deleteUser() {
-        userService.deleteUser();
-        return ResponseEntity.noContent().build();
     }
 }

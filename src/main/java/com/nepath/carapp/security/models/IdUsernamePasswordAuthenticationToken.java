@@ -1,4 +1,4 @@
-package com.nepath.carapp.security;
+package com.nepath.carapp.security.models;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;

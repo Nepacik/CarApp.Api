@@ -5,6 +5,7 @@ import com.nepath.carapp.dtos.output.CarDto;
 import com.nepath.carapp.services.CarService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;

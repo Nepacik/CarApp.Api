@@ -57,35 +57,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void saveUser(UserCreateDto userCreateDto) {
-        User user = userMapper.createUserToUser(userCreateDto);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        Role role = new Role();
-        role.setId(2L);
-        user.setRole(role);
-        if(userRepository.existsUserByEmail(user.getEmail())) {
-            throw new ApiRequestException.ConflictException("Email already exists");
-        }
-        if(userRepository.existsUserByNick(user.getNick())) {
-            throw new ApiRequestException.ConflictException("Nick already exists");
-        }
-        userRepository.save(user);
-    }
-
-    @Override
     public PaginationClassDto<UserDto> getUsers(int page) {
         Pageable pageable = PageRequest.of(page, 20);
         Page<User> users = userRepository.findAllUsersSortByEmail(pageable);
         return new PaginationClassDto<>(userMapper.userToUserDto(users.getContent()), page);
-    }
-
-    @SneakyThrows
-    @Transactional
-    @Async
-    @Override
-    public void deleteUser() {
-        carRepository.removeCarOwner(CurrentUser.getUserId());
-        TimeUnit.SECONDS.sleep(20);
-        userRepository.deleteById(CurrentUser.getUserId());
     }
 }

@@ -1,7 +1,6 @@
 package com.nepath.carapp.security.extensions;
 
-import com.nepath.carapp.models.User;
-import com.nepath.carapp.security.IdUsernamePasswordAuthenticationToken;
+import com.nepath.carapp.security.models.IdUsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class CurrentUser {
@@ -15,17 +14,5 @@ public class CurrentUser {
 
     public static String getUserName() {
         return getCurrentSecurityUserDetails().getName();
-    }
-
-    public static User getUserWithOnlyIdSet() {
-        User user = new User();
-        user.setId(getUserId());
-        return user;
-    }
-
-    public static User getUserWithOnlyNameSet() {
-        User user = new User();
-        user.setNick(getUserName());
-        return user;
     }
 }

@@ -1,14 +1,17 @@
 package com.nepath.carapp.services;
 
+import com.nepath.carapp.dtos.input.LoginDto;
 import com.nepath.carapp.dtos.input.RefreshTokenDto;
 import com.nepath.carapp.dtos.input.UserCreateDto;
+import com.nepath.carapp.dtos.input.UserDeleteDto;
 import com.nepath.carapp.dtos.output.TokenDto;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
-public interface SecurityService extends UserDetailsService {
-    TokenDto createTokenDto(String username, String userId, String role, String requestUrl);
-
+public interface AuthorizationService {
     TokenDto registerCreateToken(UserCreateDto userCreateDto, String requestUrl);
 
     TokenDto refreshToken(RefreshTokenDto refreshTokenDto, String requestUrl);
+
+    void saveUser(UserCreateDto userCreateDto);
+
+    void deleteUser(UserDeleteDto userDeleteDto);
 }
