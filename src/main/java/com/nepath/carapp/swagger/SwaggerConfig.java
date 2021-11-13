@@ -2,6 +2,7 @@ package com.nepath.carapp.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiKey;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @Configuration
 @EnableSwagger2
+@Profile({"prod"})
 public class SwaggerConfig {
 
     @Bean

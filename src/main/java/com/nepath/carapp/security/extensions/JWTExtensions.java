@@ -19,6 +19,9 @@ public class JWTExtensions {
     @Value("${nepath.secretRefreshToken}")
     private String secretRefreshToken;
 
+    @Value("${nepath.apiKey}")
+    public String apiKey;
+
     private Algorithm getAccessTokenAlgorithm() {
         return Algorithm.HMAC256(secretAccessToken.getBytes());
     }
