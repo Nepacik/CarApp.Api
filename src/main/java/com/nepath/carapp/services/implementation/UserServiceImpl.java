@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -33,8 +34,6 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
-    private final CarRepository carRepository;
-    private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
     @Override
@@ -58,8 +57,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public PaginationClassDto<UserDto> getUsers(int page) {
-        Pageable pageable = PageRequest.of(page, 20);
-        Page<User> users = userRepository.findAllUsersSortByEmail(pageable);
+        Pageable pageable = PageRequest.of(page, 20, Sort.by("email"));
+        Page<User> users = userRepository.findAll(pageable);
         return new PaginationClassDto<>(userMapper.userToUserDto(users.getContent()), page);
     }
 }

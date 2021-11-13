@@ -16,7 +16,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsUserByEmail(String email);
 
     boolean existsUserByNick(String nick);
-
-    @Query(value = "SELECT * FROM users ORDER BY email", nativeQuery = true)
-    Page<User> findAllUsersSortByEmail(Pageable pageable);
 }
