@@ -6,6 +6,8 @@ import com.nepath.carapp.dtos.input.RefreshTokenDto;
 import com.nepath.carapp.dtos.input.UserCreateDto;
 import com.nepath.carapp.dtos.input.UserDeleteDto;
 import com.nepath.carapp.dtos.output.TokenDto;
+import com.nepath.carapp.models.RefreshToken;
+import com.nepath.carapp.repositories.RefreshTokenRepository;
 import com.nepath.carapp.security.enums.TokenType;
 import com.nepath.carapp.exceptions.ApiRequestException;
 import com.nepath.carapp.mappers.UserMapper;
@@ -15,12 +17,14 @@ import com.nepath.carapp.repositories.CarRepository;
 import com.nepath.carapp.repositories.UserRepository;
 import com.nepath.carapp.security.extensions.CurrentUser;
 import com.nepath.carapp.security.extensions.JWTExtensions;
-import com.nepath.carapp.security.properties.JWTProperties;
+import com.nepath.carapp.security.models.SecurityUserDetails;
 import com.nepath.carapp.services.AuthorizationService;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,18 +39,34 @@ public class AuthorizationServiceImpl implements AuthorizationService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final CarRepository carRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final JWTExtensions jwtExtensions;
 
     @Override
-    public TokenDto registerCreateToken(UserCreateDto userCreateDto, String requestUrl) {
-        User user = userRepository.findByNick(userCreateDto.getNick());
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        User user = userRepository.findByNick(username);
         if (user == null) {
-            throw new ApiRequestException.AuthorizationException();
+            log.error("user not found");
+            throw new UsernameNotFoundException("User not found");
         }
-        return createTokenDto(user.getNick(), user.getId().toString(), user.getRole().getName(), requestUrl);
+        return new SecurityUserDetails(user.getId(), user.getNick(), user.getPassword(), user.getRole().getName());
     }
 
     @Override
-    public void saveUser(UserCreateDto userCreateDto) {
+    public void saveToken(Long userId, String refreshToken) {
+        User user = new User();
+        user.setId(userId);
+
+        RefreshToken refreshTokenEntity = new RefreshToken();
+        refreshTokenEntity.setUser(user);
+        refreshTokenEntity.setName(refreshToken);
+
+        refreshTokenRepository.save(refreshTokenEntity);
+    }
+
+    @Override
+    @Transactional
+    public TokenDto saveUser(UserCreateDto userCreateDto, String request) {
         User user = userMapper.createUserToUser(userCreateDto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         Role role = new Role();
@@ -59,19 +79,25 @@ public class AuthorizationServiceImpl implements AuthorizationService {
             throw new ApiRequestException.ConflictException("Nick already exists");
         }
         userRepository.save(user);
+        String accessToken = jwtExtensions.createToken(user.getNick(), user.getId().toString(), user.getRole().getName(), request, TokenType.ACCESS_TOKEN);
+        String refreshToken = jwtExtensions.createToken(user.getNick(), user.getId().toString(), user.getRole().getName(), request, TokenType.REFRESH_TOKEN);
+        saveToken(user.getId(), refreshToken);
+
+        return new TokenDto(accessToken, refreshToken);
+
     }
 
     @SneakyThrows
     @Override
     public TokenDto refreshToken(RefreshTokenDto refreshTokenDto, String requestUrl) {
-        String username = JWTExtensions.getUsernameFromToken(refreshTokenDto.getRefreshToken());
-        User user = userRepository.findByNick(username);
-        if (user == null) {
+        RefreshToken refreshToken = refreshTokenRepository.findByName(refreshTokenDto.getRefreshToken());
+        if (refreshToken == null) {
             log.error("User not found during refresh token attempt");
 
             throw new ApiRequestException.AuthorizationException();
         }
-        String accessToken = JWTExtensions.createToken(user.getNick(), user.getId().toString(), user.getRole().getName(), requestUrl, TokenType.ACCESS_TOKEN);
+        User user = refreshToken.getUser();
+        String accessToken = jwtExtensions.createToken(user.getNick(), user.getId().toString(), user.getRole().getName(), requestUrl, TokenType.ACCESS_TOKEN);
 
         return new TokenDto(accessToken, refreshTokenDto.getRefreshToken());
     }
@@ -90,11 +116,9 @@ public class AuthorizationServiceImpl implements AuthorizationService {
         }
     }
 
-    private TokenDto createTokenDto(String username, String userId, String role, String requestUrl) {
-
-        String accessToken = JWTExtensions.createToken(username, userId, role, requestUrl, TokenType.ACCESS_TOKEN);
-        String refreshToken = JWTExtensions.createToken(username, userId, role, requestUrl, TokenType.REFRESH_TOKEN);
-
-        return new TokenDto(accessToken, refreshToken);
+    @Override
+    public void logout() {
+        //Not the best solution, cause that will cause all sessions to expire, but the most important thing in this small app is to logout user no matter how
+        refreshTokenRepository.deleteAllByUserId(CurrentUser.getUserId());
     }
 }

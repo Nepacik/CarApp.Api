@@ -9,6 +9,7 @@ import com.nepath.carapp.services.AuthorizationService;
 import com.nepath.carapp.services.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,6 @@ public class AuthorizationController {
 
     @PostMapping("/refreshToken")
     public ResponseEntity<TokenDto> refreshToken(HttpServletRequest request, @Valid @RequestBody RefreshTokenDto refreshTokenDto) {
-        String refreshToken = refreshTokenDto.getRefreshToken();
         TokenDto tokenDto = authorizationService.refreshToken(refreshTokenDto, request.getRequestURL().toString());
         return ResponseEntity.ok().body(tokenDto);
     }
@@ -35,9 +35,15 @@ public class AuthorizationController {
     @PostMapping("/register")
     public ResponseEntity<TokenDto> createUser(HttpServletRequest request, @Valid @RequestBody UserCreateDto userCreateDto) {
         URI uri = URI.create(ServletUriComponentsBuilder.fromCurrentContextPath().path("/authorization/users").toUriString());
-        authorizationService.saveUser(userCreateDto);
-        TokenDto tokenDto = authorizationService.registerCreateToken(userCreateDto, request.getRequestURL().toString());
+        TokenDto tokenDto = authorizationService.saveUser(userCreateDto, request.getRequestURL().toString());
         return ResponseEntity.created(uri).body(tokenDto);
+    }
+
+    @Secured("IS_AUTHENTICATED_FULLY")
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        authorizationService.logout();
+        return ResponseEntity.ok().build();
     }
 
     @ApiOperation("Login.")

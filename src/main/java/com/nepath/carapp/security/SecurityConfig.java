@@ -1,10 +1,12 @@
 package com.nepath.carapp.security;
 
+import com.nepath.carapp.security.extensions.JWTExtensions;
 import com.nepath.carapp.security.filters.NepathAuthenticationFailureHandler;
 import com.nepath.carapp.security.filters.NepathAuthenticationFilter;
 import com.nepath.carapp.security.filters.NepathAuthenticationSuccessHandler;
 import com.nepath.carapp.security.filters.NepathAuthorizationFilter;
 import com.nepath.carapp.security.properties.SecurityRoles;
+import com.nepath.carapp.services.SecurityUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -27,10 +29,11 @@ import org.springframework.security.web.authentication.HttpStatusEntryPoint;
 )
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserDetailsService securityService;
+    private final SecurityUserDetailsService securityService;
     private final PasswordEncoder bCryptPasswordEncoder;
     private final NepathAuthenticationSuccessHandler successHandler;
     private final NepathAuthenticationFailureHandler failureHandler;
+    private final JWTExtensions jwtExtensions;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -63,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(nepathAuthenticationFilter())
-                .addFilter(new NepathAuthorizationFilter(userDetailsService(), authenticationManager()))
+                .addFilter(new NepathAuthorizationFilter(userDetailsService(), authenticationManager(), jwtExtensions))
                 .exceptionHandling()
                 .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED))
                 .and()

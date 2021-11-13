@@ -31,6 +31,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Car> cars;
 
+    @OneToMany(mappedBy = "user")
+    private List<RefreshToken> tokens;
+
     @ManyToOne
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;

@@ -6,12 +6,12 @@ import com.nepath.carapp.dtos.input.UserCreateDto;
 import com.nepath.carapp.dtos.input.UserDeleteDto;
 import com.nepath.carapp.dtos.output.TokenDto;
 
-public interface AuthorizationService {
-    TokenDto registerCreateToken(UserCreateDto userCreateDto, String requestUrl);
-
+public interface AuthorizationService extends SecurityUserDetailsService {
     TokenDto refreshToken(RefreshTokenDto refreshTokenDto, String requestUrl);
 
-    void saveUser(UserCreateDto userCreateDto);
+    TokenDto saveUser(UserCreateDto userCreateDto, String request);
 
     void deleteUser(UserDeleteDto userDeleteDto);
+
+    void logout();
 }

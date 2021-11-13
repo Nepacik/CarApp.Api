@@ -21,10 +21,12 @@ import java.io.IOException;
 public class NepathAuthorizationFilter extends BasicAuthenticationFilter {
 
     private final UserDetailsService userDetailsService;
+    private final JWTExtensions jwtExtensions;
 
-    public NepathAuthorizationFilter(UserDetailsService userDetailsService, AuthenticationManager authenticationManager) {
+    public NepathAuthorizationFilter(UserDetailsService userDetailsService, AuthenticationManager authenticationManager, JWTExtensions jwtExtensions) {
         super(authenticationManager);
         this.userDetailsService = userDetailsService;
+        this.jwtExtensions = jwtExtensions;
     }
 
     @Override
@@ -46,7 +48,7 @@ public class NepathAuthorizationFilter extends BasicAuthenticationFilter {
         if (token != null && token.startsWith(JWTProperties.TOKEN_PREFIX)) {
             String username;
             try {
-                username = JWTExtensions.getUsernameFromToken(token);
+                username = jwtExtensions.getUsernameFromAccessToken(token);
             } catch (JWTVerificationException e) {
                 return null;
             }
