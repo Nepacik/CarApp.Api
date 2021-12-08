@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.net.URI;
 
+@CrossOrigin
 @RequiredArgsConstructor
 @RequestMapping("/authorization")
 @RestController
